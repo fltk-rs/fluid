@@ -6,7 +6,9 @@ build = "build.rs"
 edition = "2018"
 description = "Rust wrapper for fltk's fluid (RAD tool)"
 repository = "https://github.com/MoAlyousef/fltk-rs-fluid"
-keywords = ["gui", "bindings", "graphics"]
+keywords = ["gui", "rad", "fltk"]
+categories = ["gui"]
+readme = "README.md"
 license = "MIT"
 
 [build-dependencies]

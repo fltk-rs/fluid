@@ -1,3 +1,14 @@
+//! # fltk-rs-fluid
+//! 
+//! A Rust crate wrapping FLTK's fluid (RAD tool).
+//! 
+//! It allows installing fluid via cargo-install:
+//! 
+//! ```ignored
+//! $ cargo install fltk-fluid
+//! ```
+//! 
+
 use std::ffi::CString;
 use std::os::raw::*;
 
