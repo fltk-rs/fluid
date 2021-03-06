@@ -2,7 +2,7 @@ use std::{env, path::PathBuf, process::Command};
 
 fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    let manifest_dir = out_dir.join("../../../../..");
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
 
     println!("cargo:rerun-if-changed=build.rs");
