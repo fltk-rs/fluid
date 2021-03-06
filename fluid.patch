@@ -57,7 +57,7 @@ index d02059166..42ecd2f83 100644
  # Android Studio wrapup
  #######################################################################
 diff --git a/fluid/CMakeLists.txt b/fluid/CMakeLists.txt
-index fcf4cedb1..133b1f823 100644
+index fcf4cedb1..547a28fa9 100644
 --- a/fluid/CMakeLists.txt
 +++ b/fluid/CMakeLists.txt
 @@ -47,27 +47,7 @@ else ()
@@ -89,6 +89,78 @@ index fcf4cedb1..133b1f823 100644
  
  target_link_libraries (fluid fltk fltk_images fltk_forms)
  if (FLTK_HAVE_CAIRO)
+@@ -76,40 +56,40 @@ endif (FLTK_HAVE_CAIRO)
+ 
+ # install fluid
+ 
+-if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+-  # create bundle
+-  set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/fluid/fluid.app/Contents/Info.plist")
+-  set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
+-  set_target_properties (fluid PROPERTIES RESOURCE ${ICON_PATH})
+-  # install
+-  install (TARGETS fluid DESTINATION ${FLTK_BINDIR})
+-else()
+-  install (TARGETS fluid
+-    EXPORT FLTK-Targets
+-    RUNTIME DESTINATION ${FLTK_BINDIR}
+-    LIBRARY DESTINATION ${FLTK_LIBDIR}
+-    ARCHIVE DESTINATION ${FLTK_LIBDIR}
+-  )
+-endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
++# if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
++#   # create bundle
++#   set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/fluid/fluid.app/Contents/Info.plist")
++#   set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
++#   set_target_properties (fluid PROPERTIES RESOURCE ${ICON_PATH})
++#   # install
++#   install (TARGETS fluid DESTINATION ${FLTK_BINDIR})
++# else()
++#   install (TARGETS fluid
++#     EXPORT FLTK-Targets
++#     RUNTIME DESTINATION ${FLTK_BINDIR}
++#     LIBRARY DESTINATION ${FLTK_LIBDIR}
++#     ARCHIVE DESTINATION ${FLTK_LIBDIR}
++#   )
++# endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+ 
+ # install desktop files
+ 
+-if (UNIX)
+-  install (FILES fluid.desktop
+-    DESTINATION ${FLTK_DATADIR}/applications
+-  )
+-  # Install mime-type file (x-fluid.desktop method is deprecated)
+-  install (FILES fluid.xml
+-    DESTINATION ${FLTK_DATADIR}/mime/packages
+-  )
++# if (UNIX)
++#   install (FILES fluid.desktop
++#     DESTINATION ${FLTK_DATADIR}/applications
++#   )
++#   # Install mime-type file (x-fluid.desktop method is deprecated)
++#   install (FILES fluid.xml
++#     DESTINATION ${FLTK_DATADIR}/mime/packages
++#   )
+ 
+-  # Install desktop icons
+-  foreach (icon 32 48 64 128)
+-    install (FILES icons/fluid-${icon}.png
+-      DESTINATION ${FLTK_DATADIR}/icons/hicolor/${icon}x${icon}/apps
+-      RENAME fluid.png
+-    )
+-  endforeach()
+-endif (UNIX)
++#   # Install desktop icons
++#   foreach (icon 32 48 64 128)
++#     install (FILES icons/fluid-${icon}.png
++#       DESTINATION ${FLTK_DATADIR}/icons/hicolor/${icon}x${icon}/apps
++#       RENAME fluid.png
++#     )
++#   endforeach()
++# endif (UNIX)
+ 
+ endif (NOT ANDROID)
 diff --git a/fluid/fluid.cxx b/fluid/fluid.cxx
 index 1f7e27790..c5f52b074 100644
 --- a/fluid/fluid.cxx
