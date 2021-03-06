@@ -51,6 +51,16 @@ fn main() {
 
     println!(
         "cargo:rustc-link-search=native={}",
+        out_dir.join("build").join("lib").display()
+    );
+
+    println!(
+        "cargo:rustc-link-search=native={}",
+        out_dir.join("build").join("lib").join("Release").display()
+    );
+
+    println!(
+        "cargo:rustc-link-search=native={}",
         out_dir.join("lib").display()
     );
 
