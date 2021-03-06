@@ -1,0 +1,104 @@
+diff --git a/CMake/export.cmake b/CMake/export.cmake
+index 6e8bc5dd6..350a13ded 100644
+--- a/CMake/export.cmake
++++ b/CMake/export.cmake
+@@ -20,23 +20,23 @@
+ #######################################################################
+ 
+ # Set the fluid executable path
+-if (CMAKE_CROSSCOMPILING)
+-  find_file(FLUID_PATH
+-    NAMES fluid fluid.exe
+-    PATHS ENV PATH
+-    NO_CMAKE_FIND_ROOT_PATH
+-  )
+-  add_executable(fluid IMPORTED)
+-  set (FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
+-  set (FLUID)       # no export
+-  set_target_properties(fluid
+-    PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
+-  )
+-else ()
+-  add_subdirectory(fluid)
+-  set (FLTK_FLUID_EXECUTABLE fluid)
+-  set (FLUID fluid) # export
+-endif (CMAKE_CROSSCOMPILING)
++# if (CMAKE_CROSSCOMPILING)
++#   find_file(FLUID_PATH
++#     NAMES fluid fluid.exe
++#     PATHS ENV PATH
++#     NO_CMAKE_FIND_ROOT_PATH
++#   )
++#   add_executable(fluid IMPORTED)
++#   set (FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
++#   set (FLUID)       # no export
++#   set_target_properties(fluid
++#     PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
++#   )
++# else ()
++#   add_subdirectory(fluid)
++#   set (FLTK_FLUID_EXECUTABLE fluid)
++#   set (FLUID fluid) # export
++# endif (CMAKE_CROSSCOMPILING)
+ 
+ add_subdirectory(src)
+ 
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d02059166..42ecd2f83 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -143,6 +143,8 @@ if (FLTK_BUILD_EXAMPLES)
+   add_subdirectory (examples)
+ endif (FLTK_BUILD_EXAMPLES)
+ 
++add_subdirectory (fluid)
++
+ #######################################################################
+ # Android Studio wrapup
+ #######################################################################
+diff --git a/fluid/CMakeLists.txt b/fluid/CMakeLists.txt
+index fcf4cedb1..133b1f823 100644
+--- a/fluid/CMakeLists.txt
++++ b/fluid/CMakeLists.txt
+@@ -47,27 +47,7 @@ else ()
+   list (APPEND CPPFILES ExternalCodeEditor_UNIX.cxx)
+ endif (WIN32)
+ 
+-if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+-  set (ICON_NAME fluid.icns)
+-  set (ICON_PATH "${PROJECT_SOURCE_DIR}/fluid/fluid.app/Contents/Resources/${ICON_NAME}")
+-  add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
+-
+-  # create macOS bundle wrapper script
+-
+-  set (WRAPPER "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/fluid")
+-  add_custom_command (
+-    TARGET fluid POST_BUILD
+-    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/macOS-bundle-wrapper.in ${WRAPPER}
+-    COMMAND chmod u+x,g+x,o+x ${WRAPPER}
+-    BYPRODUCTS ${WRAPPER}
+-    # COMMENT "Creating macOS bundle wrapper script ${WRAPPER}"
+-    VERBATIM
+-  )
+-  unset (WRAPPER)
+-
+-else ()
+-  add_executable (fluid WIN32 ${CPPFILES})
+-endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
++add_library(fluid STATIC ${CPPFILES})
+ 
+ target_link_libraries (fluid fltk fltk_images fltk_forms)
+ if (FLTK_HAVE_CAIRO)
+diff --git a/fluid/fluid.cxx b/fluid/fluid.cxx
+index 1f7e27790..c5f52b074 100644
+--- a/fluid/fluid.cxx
++++ b/fluid/fluid.cxx
+@@ -1747,7 +1747,7 @@ static void sigint(SIGARG) {
+ }
+ #endif
+ 
+-int main(int argc,char **argv) {
++extern "C" int fluid_main(int argc,char **argv) {
+   int i = 1;
+ 
+   setlocale(LC_ALL, "");      // enable multilanguage errors in file chooser
