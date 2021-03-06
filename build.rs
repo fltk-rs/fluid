@@ -82,6 +82,7 @@ fn main() {
             println!("cargo:rustc-link-lib=framework=Carbon");
             println!("cargo:rustc-link-lib=framework=Cocoa");
             println!("cargo:rustc-link-lib=framework=ApplicationServices");
+            println!("cargo:rustc-link-lib=dylib=c++");
         }
         "windows" => {
             println!("cargo:rustc-link-lib=dylib=ws2_32");
@@ -97,6 +98,9 @@ fn main() {
             println!("cargo:rustc-link-lib=dylib=user32");
             println!("cargo:rustc-link-lib=dylib=kernel32");
             println!("cargo:rustc-link-lib=dylib=odbc32");
+            if cfg!(target_env = "gnu") {
+                println!("cargo:rustc-link-lib=dylib=stdc++");
+            }
         }
         _ => {
             println!("cargo:rustc-link-lib=dylib=pthread");
