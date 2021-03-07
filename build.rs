@@ -13,12 +13,6 @@ fn main() {
         .status()
         .expect("Git is needed to retrieve the fltk source files!");
 
-    Command::new("git")
-        .args(&["apply", "../fluid.patch"])
-        .current_dir(manifest_dir.join("fltk"))
-        .status()
-        .expect("Git is needed to retrieve the fltk source files!");
-
     let _dst = cmake::Config::new("fltk")
         .profile("Release")
         .define("CMAKE_EXPORT_COMPILE_COMMANDS", "ON")
@@ -32,12 +26,6 @@ fn main() {
         .define("OPTION_BUILD_HTML_DOCUMENTATION", "OFF")
         .define("OPTION_BUILD_PDF_DOCUMENTATION", "OFF")
         .build();
-
-    Command::new("git")
-        .args(&["reset", "--hard"])
-        .current_dir(manifest_dir.join("fltk"))
-        .status()
-        .expect("Git is needed to retrieve the fltk source files!");
 
     println!(
         "cargo:rustc-link-search=native={}",
