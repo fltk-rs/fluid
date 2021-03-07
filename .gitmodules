@@ -1,4 +1,4 @@
 [submodule "fltk"]
 	path = fltk
-	url = https://github.com/moalyousef/fltk
+	url = https://github.com/MoAlyousef/fltk.git
 	branch = "fluid-lib"
