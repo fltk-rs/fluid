@@ -4,6 +4,7 @@ fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+    let target_triple = env::var("TARGET").unwrap();
 
     println!("cargo:rerun-if-changed=build.rs");
 
