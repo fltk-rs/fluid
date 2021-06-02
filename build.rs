@@ -13,7 +13,7 @@ fn main() {
         .status()
         .expect("Git is needed to retrieve the fltk source files!");
 
-    let _dst = cmake::Config::new("fltk")
+    let dst = cmake::Config::new("fltk")
         .profile("Release")
         .define("CMAKE_EXPORT_COMPILE_COMMANDS", "ON")
         .define("FLTK_BUILD_EXAMPLES", "OFF")
@@ -24,8 +24,16 @@ fn main() {
         .define("OPTION_USE_THREADS", "ON")
         .define("OPTION_LARGE_FILE", "ON")
         .define("OPTION_BUILD_HTML_DOCUMENTATION", "OFF")
-        .define("OPTION_BUILD_PDF_DOCUMENTATION", "OFF")
-        .build();
+        .define("OPTION_BUILD_PDF_DOCUMENTATION", "OFF");
+
+    if !target_triple.contains("apple")
+        && !target_triple.contains("windows")
+        && !target_triple.contains("android")
+    {
+        dst.define("OPTION_USE_SYSTEM_LIBPNG", "ON");
+    }
+
+    dst.build();
 
     println!(
         "cargo:rustc-link-search=native={}",
@@ -70,10 +78,18 @@ fn main() {
     println!("cargo:rustc-link-lib=static=fltk");
     println!("cargo:rustc-link-lib=static=fltk_images");
     println!("cargo:rustc-link-lib=static=fltk_z");
-    println!("cargo:rustc-link-lib=static=fltk_png");
     println!("cargo:rustc-link-lib=static=fltk_jpeg");
     println!("cargo:rustc-link-lib=static=fltk_forms");
     println!("cargo:rustc-link-lib=static=fluid");
+
+    if !target_triple.contains("apple")
+        && !target_triple.contains("windows")
+        && !target_triple.contains("android")
+    {
+        println!("cargo:rustc-link-lib=dylib=png");
+    } else {
+        println!("cargo:rustc-link-lib=static=fltk_png");
+    }
 
     match target_os.as_str() {
         "macos" => {
@@ -83,6 +99,7 @@ fn main() {
             println!("cargo:rustc-link-lib=dylib=c++");
         }
         "windows" => {
+            println!("cargo:rustc-link-lib=dylib=gdiplus");
             println!("cargo:rustc-link-lib=dylib=ws2_32");
             println!("cargo:rustc-link-lib=dylib=comctl32");
             println!("cargo:rustc-link-lib=dylib=gdi32");
