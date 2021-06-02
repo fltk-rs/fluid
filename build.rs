@@ -14,8 +14,8 @@ fn main() {
         .status()
         .expect("Git is needed to retrieve the fltk source files!");
 
-    let dst = cmake::Config::new("fltk")
-        .profile("Release")
+    let mut dst = cmake::Config::new("fltk");
+        dst.profile("Release")
         .define("CMAKE_EXPORT_COMPILE_COMMANDS", "ON")
         .define("FLTK_BUILD_EXAMPLES", "OFF")
         .define("FLTK_BUILD_TEST", "OFF")
