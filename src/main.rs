@@ -10,14 +10,17 @@
 //! 
 
 use std::ffi::CString;
-use std::os::raw::*;
+use std::{env, os::raw};
 
 extern "C" {
-    pub fn fluid_main(argc: c_int, argv: *mut *mut c_char) -> c_int;
+    pub fn fluid_main(argc: raw::c_int, argv: *mut *mut raw::c_char) -> raw::c_int;
 }
 
 fn main() {
-    let mut args: Vec<*mut c_char> = std::env::args().map(|s| CString::new(s.as_str()).unwrap().into_raw()).collect();
+    let mut args: Vec<_> = env::args()
+        .into_iter()
+        .map(|s| CString::new(s).unwrap().into_raw())
+        .collect();
     unsafe {
         fluid_main(args.len() as i32, args.as_mut_ptr());
     }
