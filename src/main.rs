@@ -21,7 +21,8 @@ fn main() {
         .into_iter()
         .map(|s| CString::new(s).unwrap().into_raw())
         .collect();
+    args.push(std::ptr::null_mut());
     unsafe {
-        fluid_main(args.len() as i32, args.as_mut_ptr());
+        fluid_main(args.len() as i32 -1, args.as_mut_ptr());
     }
 }
