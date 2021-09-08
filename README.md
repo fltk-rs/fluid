@@ -1,4 +1,4 @@
-# fltk-rs-fluid
+# fltk-fluid
 
 A Rust crate wrapping FLTK's fluid (RAD tool).
 
