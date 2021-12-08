@@ -4,7 +4,6 @@ fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
-    let target_triple = env::var("TARGET").unwrap();
 
     println!("cargo:rerun-if-changed=build.rs");
 
@@ -26,13 +25,6 @@ fn main() {
         .define("OPTION_LARGE_FILE", "ON")
         .define("OPTION_BUILD_HTML_DOCUMENTATION", "OFF")
         .define("OPTION_BUILD_PDF_DOCUMENTATION", "OFF");
-
-    if !target_triple.contains("apple")
-        && !target_triple.contains("windows")
-        && !target_triple.contains("android")
-    {
-        dst.define("OPTION_USE_SYSTEM_LIBPNG", "ON");
-    }
 
     dst.build();
 
@@ -80,17 +72,9 @@ fn main() {
     println!("cargo:rustc-link-lib=static=fltk_images");
     println!("cargo:rustc-link-lib=static=fltk_z");
     println!("cargo:rustc-link-lib=static=fltk_jpeg");
+    println!("cargo:rustc-link-lib=static=fltk_png");
     println!("cargo:rustc-link-lib=static=fltk_forms");
     println!("cargo:rustc-link-lib=static=fluid");
-
-    if !target_triple.contains("apple")
-        && !target_triple.contains("windows")
-        && !target_triple.contains("android")
-    {
-        println!("cargo:rustc-link-lib=dylib=png");
-    } else {
-        println!("cargo:rustc-link-lib=static=fltk_png");
-    }
 
     match target_os.as_str() {
         "macos" => {
