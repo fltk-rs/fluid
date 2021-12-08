@@ -1,73 +1,67 @@
 diff --git a/CMake/export.cmake b/CMake/export.cmake
-index 6e8bc5dd6..350a13ded 100644
+index 81f6e08d1..bf801fda3 100644
 --- a/CMake/export.cmake
 +++ b/CMake/export.cmake
-@@ -20,23 +20,23 @@
- #######################################################################
+@@ -21,20 +21,20 @@
  
- # Set the fluid executable path
+ # Set the fluid executable path used to create .cxx/.h from .fl files
+ 
 -if (CMAKE_CROSSCOMPILING)
+-  # find a fluid executable on the host system
 -  find_file(FLUID_PATH
 -    NAMES fluid fluid.exe
 -    PATHS ENV PATH
 -    NO_CMAKE_FIND_ROOT_PATH
 -  )
--  add_executable(fluid IMPORTED)
 -  set (FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
--  set (FLUID)       # no export
--  set_target_properties(fluid
--    PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
--  )
+-  set (FLUID)                       # don't export
 -else ()
--  add_subdirectory(fluid)
+-  # use the fluid executable we build
 -  set (FLTK_FLUID_EXECUTABLE fluid)
--  set (FLUID fluid) # export
+-  set (FLUID fluid)                 # export
 -endif (CMAKE_CROSSCOMPILING)
 +# if (CMAKE_CROSSCOMPILING)
++#   # find a fluid executable on the host system
 +#   find_file(FLUID_PATH
 +#     NAMES fluid fluid.exe
 +#     PATHS ENV PATH
 +#     NO_CMAKE_FIND_ROOT_PATH
 +#   )
-+#   add_executable(fluid IMPORTED)
 +#   set (FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
-+#   set (FLUID)       # no export
-+#   set_target_properties(fluid
-+#     PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
-+#   )
++#   set (FLUID)                       # don't export
 +# else ()
-+#   add_subdirectory(fluid)
++#   # use the fluid executable we build
 +#   set (FLTK_FLUID_EXECUTABLE fluid)
-+#   set (FLUID fluid) # export
++#   set (FLUID fluid)                 # export
 +# endif (CMAKE_CROSSCOMPILING)
  
- add_subdirectory(src)
- 
+ # generate FLTK-Targets.cmake for build directory use
+ export(TARGETS ${FLUID} ${FLTK_LIBRARIES} FILE ${CMAKE_CURRENT_BINARY_DIR}/FLTK-Targets.cmake)
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 7a05f6c49..6a62efd6b 100644
+index 72b9102d7..4aebbc01d 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -143,6 +143,8 @@ if (FLTK_BUILD_EXAMPLES)
+@@ -159,6 +159,8 @@ if (FLTK_BUILD_EXAMPLES)
    add_subdirectory (examples)
  endif (FLTK_BUILD_EXAMPLES)
  
-+add_subdirectory (fluid)
++add_subdirectory(fluid)
 +
  #######################################################################
  # Android Studio wrapup
  #######################################################################
 diff --git a/fluid/CMakeLists.txt b/fluid/CMakeLists.txt
-index 2377d721f..a2086bd2b 100644
+index d45b7b1b7..55796ef77 100644
 --- a/fluid/CMakeLists.txt
 +++ b/fluid/CMakeLists.txt
-@@ -47,27 +47,28 @@ else ()
-   list (APPEND CPPFILES ExternalCodeEditor_UNIX.cxx)
- endif (WIN32)
+@@ -83,27 +83,27 @@ endif (WIN32)
+ 
+ source_group("Header Files" FILES ${HEADERFILES})
  
 -if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 -  set (ICON_NAME fluid.icns)
 -  set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
--  add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
+-  add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${HEADERFILES} ${ICON_PATH})
 -
 -  # create macOS bundle wrapper script
 -
@@ -83,12 +77,12 @@ index 2377d721f..a2086bd2b 100644
 -  unset (WRAPPER)
 -
 -else ()
--  add_executable (fluid WIN32 ${CPPFILES})
+-  add_executable (fluid WIN32 ${CPPFILES} ${HEADERFILES})
 -endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 +# if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 +#   set (ICON_NAME fluid.icns)
 +#   set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
-+#   add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
++#   add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${HEADERFILES} ${ICON_PATH})
 +
 +#   # create macOS bundle wrapper script
 +
@@ -104,13 +98,12 @@ index 2377d721f..a2086bd2b 100644
 +#   unset (WRAPPER)
 +
 +# else ()
-+#   add_executable (fluid WIN32 ${CPPFILES})
++#   add_executable (fluid WIN32 ${CPPFILES} ${HEADERFILES})
 +# endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
-+add_library(fluid STATIC ${CPPFILES})
  
  target_link_libraries (fluid fltk fltk_images fltk_forms)
  if (FLTK_HAVE_CAIRO)
-@@ -84,40 +85,40 @@ endif (USE_GDIPLUS)
+@@ -116,38 +116,38 @@ endif (USE_GDIPLUS)
  
  # install fluid
  
@@ -181,16 +174,14 @@ index 2377d721f..a2086bd2b 100644
 +#     )
 +#   endforeach()
 +# endif (UNIX)
- 
- endif (NOT ANDROID)
 diff --git a/fluid/fluid.cxx b/fluid/fluid.cxx
-index 1f7e27790..c5f52b074 100644
+index 7fe776fa9..0368e503f 100644
 --- a/fluid/fluid.cxx
 +++ b/fluid/fluid.cxx
-@@ -1747,7 +1747,7 @@ static void sigint(SIGARG) {
- }
- #endif
- 
+@@ -1769,7 +1769,7 @@ static void sigint(SIGARG) {
+     in batch mode. Is that intentional? Does it circumvent issues with Windows'
+  stderr and stdout?
+  */
 -int main(int argc,char **argv) {
 +extern "C" int fluid_main(int argc,char **argv) {
    int i = 1;
