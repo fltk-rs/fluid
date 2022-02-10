@@ -1,10 +1,11 @@
 # fltk-fluid
 
-A Rust crate wrapping FLTK's fluid (RAD tool).
+A Rust crate that install's FLTK's fluid (RAD tool).
 
 It allows installing fluid via cargo-install:
 
 ```
 $ cargo install fltk-fluid
-$ fltk-fluid &
+$ cargo uninstall fltk-fluid
+$ fluid &
 ```

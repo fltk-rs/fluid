@@ -4,7 +4,7 @@ fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let cargo_home = PathBuf::from(env::var("CARGO_HOME").unwrap());
-    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+    let target = env::var("TARGET").unwrap();
 
     println!("cargo:rerun-if-changed=build.rs");
 
@@ -29,15 +29,15 @@ fn main() {
     dst.build();
 
     let mut inp = out_dir.join("bin/fluid");
+    let mut out = cargo_home.join("bin/fluid");
 
-    let mut out = cargo_home.join("bin/fltk-fluid");
+    if target.contains("windows") {
+        inp.set_extension("exe");
+        out.set_extension("exe");
+    }
 
-    match target_os.as_str() {
-        "windows" => {
-            inp = inp.join(".exe");
-            out = out.join(".exe");
-        }
-        _ => (),
+    if !target.contains("msvc") {
+        Command::new("strip").arg(&inp).status().unwrap();
     }
 
     std::fs::copy(&inp, &out).unwrap();
