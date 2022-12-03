@@ -14,12 +14,6 @@ fn main() {
         .status()
         .expect("Git is needed to retrieve the fltk source files!");
 
-    Command::new("git")
-        .args(&["checkout", "master"])
-        .current_dir(manifest_dir.clone().join("fltk"))
-        .status()
-        .expect("Git is needed to retrieve the fltk source files!");
-
     let mut dst = cmake::Config::new("fltk");
     dst.profile("Release")
         .define("CMAKE_EXPORT_COMPILE_COMMANDS", "ON")
