@@ -21,6 +21,7 @@ fn main() {
     dst.profile("Release")
         .define("FLTK_BUILD_EXAMPLES", "OFF")
         .define("FLTK_BUILD_TEST", "OFF")
+        .define("FLTK_BUILD_GL", "OFF")
         .define("FLTK_BUILD_HTML_DOCS", "OFF")
         .define("FLTK_BUILD_PDF_DOCS", "OFF");
     if !target.contains("windows") && !target.contains("apple") {
