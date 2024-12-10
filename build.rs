@@ -2,7 +2,6 @@ use std::{env, path::PathBuf, process::Command};
 
 fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let cargo_home = PathBuf::from(env::var("CARGO_HOME").unwrap());
     let target = env::var("TARGET").unwrap();
 
@@ -14,7 +13,7 @@ fn main() {
             "https://github.com/fltk/fltk",
             "--depth=1",
         ])
-        .current_dir(out_dir)
+        .current_dir(&out_dir)
         .status()
         .ok();
 
