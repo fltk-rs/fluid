@@ -9,23 +9,23 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
 
     Command::new("git")
-        .args(&["submodule", "update", "--init", "--recursive"])
-        .current_dir(manifest_dir.clone())
+        .args([
+            "clone",
+            "https://github.com/fltk/fltk",
+            "--depth=1",
+        ])
+        .current_dir(out_dir)
         .status()
-        .expect("Git is needed to retrieve the fltk source files!");
+        .ok();
 
-    let mut dst = cmake::Config::new("fltk");
+    let mut dst = cmake::Config::new(out_dir.join("fltk"));
     dst.profile("Release")
-        .define("CMAKE_EXPORT_COMPILE_COMMANDS", "ON")
         .define("FLTK_BUILD_EXAMPLES", "OFF")
         .define("FLTK_BUILD_TEST", "OFF")
-        .define("OPTION_USE_THREADS", "ON")
-        .define("OPTION_LARGE_FILE", "ON")
-        .define("OPTION_BUILD_HTML_DOCUMENTATION", "OFF")
-        .define("OPTION_BUILD_PDF_DOCUMENTATION", "OFF");
+        .define("FLTK_BUILD_HTML_DOCS", "OFF")
+        .define("FLTK_BUILD_PDF_DOCS", "OFF");
     if !target.contains("windows") && !target.contains("apple") {
-        dst.define("OPTION_USE_CAIRO", "ON");
-        dst.define("OPTION_USE_PANGO", "ON");
+        dst.define("FLTK_GRAPHICS_CAIRO", "ON");
     }
     dst.build();
 

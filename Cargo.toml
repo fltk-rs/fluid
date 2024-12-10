@@ -1,6 +1,6 @@
 [package]
 name = "fltk-fluid"
-version = "0.1.9"
+version = "0.2.0"
 authors = ["MoAlyousef <mohammed.alyousef@neurosrg.com>"]
 build = "build.rs"
 edition = "2018"
